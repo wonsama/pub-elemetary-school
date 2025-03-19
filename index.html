@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>랜덤 구구단 게임</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background-color: #f4f4f9;
+        margin: 0;
+        padding: 0;
+      }
+      h1 {
+        color: #333;
+      }
+      .container {
+        margin-top: 50px;
+      }
+      .question {
+        font-size: 24px;
+        margin: 20px 0;
+      }
+      input[type="number"] {
+        padding: 10px;
+        font-size: 18px;
+        width: 100px;
+        text-align: center;
+      }
+      button {
+        padding: 10px 20px;
+        font-size: 18px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      .result {
+        margin-top: 20px;
+        font-size: 20px;
+      }
+      .result.correct {
+        color: green;
+      }
+      .result.wrong {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>랜덤 구구단 게임</h1>
+    <div id="timer">진행 시간: <span id="time">10</span>초</div>
+    <script>
+      let time = 0;
+      const timerElement = document.getElementById("time");
+
+      // 1초마다 남은 시간 표시
+      const timerId = setInterval(() => {
+        time++;
+        timerElement.textContent = time;
+        if (time === 0) {
+          clearInterval(timerId);
+          alert("시간이 초과되었습니다.");
+        }
+      }, 1000);
+    </script>
+    <div class="container">
+      <div class="question" id="question"></div>
+      <input
+        type="number"
+        id="answer"
+        placeholder="정답 입력"
+        onkeydown="checkAnswer(event)"
+        type="number"
+      />
+      <div class="result" id="result"></div>
+    </div>
+
+    <script>
+      let num1, num2;
+
+      let success = 0;
+      let fail = 0;
+      let total = 0;
+
+      // 랜덤 구구단 문제 생성
+      function generateQuestion() {
+        num1 = Math.floor(Math.random() * 9) + 2; // 1부터 9까지 랜덤 숫자
+        num2 = Math.floor(Math.random() * 9) + 2; // 1부터 9까지 랜덤 숫자
+        total++; // 문제 수 증가
+        document.getElementById(
+          "question"
+        ).textContent = `${num1} × ${num2} = ?`;
+        document.getElementById("answer").value = ""; // 입력 필드 초기화
+        document.getElementById("result").textContent = ""; // 결과 초기화
+      }
+
+      // 정답 확인
+      function checkAnswer(event) {
+        const userAnswer = parseInt(document.getElementById("answer").value);
+        const correctAnswer = num1 * num2;
+        const resultElement = document.getElementById("result");
+
+        // 엔터 키가 아니거나 숫자가 아닌 경우
+        if (event.key !== "Enter" || isNaN(userAnswer)) return;
+
+        // 정답 확인
+        if (userAnswer === correctAnswer) {
+          success++;
+          resultElement.innerHTML = `정답입니다! 🎉 <br/>(${success}/${total})`;
+          resultElement.className = "result correct";
+        } else {
+          fail++;
+          resultElement.innerHTML = `정답은 ${correctAnswer}입니다. 😢 <br/>(${success}/${total})`;
+          resultElement.className = "result wrong";
+        }
+
+        // 1초 후 다음 문제 생성
+        setTimeout(generateQuestion, 1000);
+      }
+
+      // 페이지 로드 시
+      window.onload = () => {
+        // 문제 생성
+        generateQuestion();
+        // 최초 포커스 설정
+        document.getElementById("answer").focus();
+      };
+    </script>
+  </body>
+</html>
